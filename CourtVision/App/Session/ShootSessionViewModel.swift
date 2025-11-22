@@ -25,7 +25,6 @@ final class ShootSessionViewModel: ObservableObject {
         self.cvPipeline = cvPipeline
         self.environment = environment
         self.calibration = calibration
-        super.init()
         bindPipeline()
     }
 
@@ -74,8 +73,10 @@ final class ShootSessionViewModel: ObservableObject {
     private func bindPipeline() {
         cameraService.onSampleBuffer = { [weak self] buffer in
             guard let self else { return }
+            let pipeline = self.cvPipeline
+            let calibration = self.calibration
             Task.detached(priority: .userInitiated) {
-                self.cvPipeline.processSampleBuffer(buffer, calibration: self.calibration)
+                pipeline.processSampleBuffer(buffer, calibration: calibration)
             }
         }
 
