@@ -1,4 +1,5 @@
 import AVFoundation
+import Combine
 import Foundation
 
 /// Manages the active shootaround session, piping camera frames to CV, handling shot events, and aggregating stats.
@@ -10,10 +11,12 @@ final class ShootSessionViewModel: ObservableObject {
     @Published var isSessionActive = false
     @Published var pastSessions: [SessionRecord] = []
     @Published var cameraAccessDenied = false
+    @Published private(set) var cameraUnavailable = false
 
     private let cameraService: CameraService
     private let cvPipeline: CVPipeline
     private let environment: AppEnvironment
+    private var cancellables: Set<AnyCancellable> = []
 
     init(
         cameraService: CameraService,
@@ -26,6 +29,7 @@ final class ShootSessionViewModel: ObservableObject {
         self.environment = environment
         self.calibration = calibration
         bindPipeline()
+        observeCameraAvailability()
     }
 
     var cameraSession: AVCaptureSession {
@@ -86,6 +90,13 @@ final class ShootSessionViewModel: ObservableObject {
                 self.handle(event: event)
             }
         }
+    }
+
+    private func observeCameraAvailability() {
+        cameraService.$isCameraAvailable
+            .receive(on: DispatchQueue.main)
+            .map { !$0 }
+            .assign(to: &$cameraUnavailable)
     }
 
     private func handle(event: ShotEvent) {

@@ -29,3 +29,26 @@ final class PreviewView: UIView {
         return layer
     }
 }
+
+struct CameraUnavailableOverlay: View {
+    let title: String
+    let message: String
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "camera.fill.badge.ellipsis")
+                .font(.largeTitle)
+            Text(title)
+                .font(.headline)
+            Text(message)
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .padding()
+        .allowsHitTesting(false)
+    }
+}
