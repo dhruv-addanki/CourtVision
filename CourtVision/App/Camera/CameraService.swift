@@ -5,6 +5,7 @@ import Foundation
 /// Wraps `AVCaptureSession` configuration, permissions, and frame delivery.
 final class CameraService: NSObject, ObservableObject {
     @Published var authorizationStatus: AVAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+    @Published var isCameraAvailable = true
 
     private let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "com.courtvision.camera.session")
@@ -39,6 +40,10 @@ final class CameraService: NSObject, ObservableObject {
     func startRunning() {
         sessionQueue.async { [weak self] in
             guard let self else { return }
+            guard self.isCameraAvailable else {
+                Logging.log("Camera unavailable; start ignored", level: .warning)
+                return
+            }
             guard self.authorizationStatus == .authorized else {
                 Logging.log("Camera access not authorized; start ignored", level: .warning)
                 return
@@ -70,6 +75,9 @@ final class CameraService: NSObject, ObservableObject {
                   let input = try? AVCaptureDeviceInput(device: device),
                   self.captureSession.canAddInput(input) else {
                 Logging.log("Unable to create camera input", level: .error)
+                DispatchQueue.main.async {
+                    self.isCameraAvailable = false
+                }
                 self.captureSession.commitConfiguration()
                 return
             }
@@ -85,6 +93,9 @@ final class CameraService: NSObject, ObservableObject {
                 self.captureSession.addOutput(self.videoOutput)
             } else {
                 Logging.log("Unable to add video data output", level: .error)
+                DispatchQueue.main.async {
+                    self.isCameraAvailable = false
+                }
             }
 
             if let connection = self.videoOutput.connection(with: .video) {

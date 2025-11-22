@@ -3,7 +3,7 @@ import SwiftUI
 struct CalibrationView: View {
     @ObservedObject var viewModel: CalibrationViewModel
     @ObservedObject var sessionViewModel: ShootSessionViewModel
-    let cameraService: CameraService
+    @ObservedObject var cameraService: CameraService
     let aiInsightsService: any AIInsightsProviding
 
     @State private var navigateToSession = false
@@ -11,12 +11,23 @@ struct CalibrationView: View {
 
     var body: some View {
         ZStack {
-            CameraPreviewView(session: cameraService.session)
-                .ignoresSafeArea()
-                .overlay(Color.black.opacity(0.12))
+            if cameraService.isCameraAvailable {
+                CameraPreviewView(session: cameraService.session)
+                    .ignoresSafeArea()
+                    .overlay(Color.black.opacity(0.12))
+            } else {
+                Color.black.ignoresSafeArea()
+            }
 
             CalibrationEditorOverlay(calibration: $viewModel.calibration, selectedTool: $viewModel.selectedTool)
                 .ignoresSafeArea()
+
+            if !cameraService.isCameraAvailable {
+                CameraUnavailableOverlay(
+                    title: "Camera unavailable",
+                    message: "Use a physical device or enable camera access to see the live preview."
+                )
+            }
 
             VStack(spacing: 16) {
                 VStack(spacing: 8) {

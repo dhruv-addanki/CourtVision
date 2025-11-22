@@ -10,11 +10,22 @@ struct ShootSessionView: View {
 
     var body: some View {
         ZStack {
-            CameraPreviewView(session: viewModel.cameraSession)
-                .ignoresSafeArea()
+            if viewModel.cameraUnavailable {
+                Color.black.ignoresSafeArea()
+            } else {
+                CameraPreviewView(session: viewModel.cameraSession)
+                    .ignoresSafeArea()
+            }
 
             CalibrationOverlayDisplay(calibration: viewModel.calibration)
                 .ignoresSafeArea()
+
+            if viewModel.cameraUnavailable {
+                CameraUnavailableOverlay(
+                    title: "Camera unavailable",
+                    message: "Use a physical device or enable camera access to see the live preview."
+                )
+            }
 
             VStack {
                 statsHeader
