@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FC058B932ED24D2F0025F616 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = FC058B792ED24D2F0025F616 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		FC058B792ED24D2F0025F616 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		FC6B4B302ED249AF0029767C /* CourtVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CourtVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -34,6 +39,7 @@
 			children = (
 				FC6B4B322ED249AF0029767C /* CourtVision */,
 				FC6B4B312ED249AF0029767C /* Products */,
+				FC058B792ED24D2F0025F616 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC058B932ED24D2F0025F616 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
